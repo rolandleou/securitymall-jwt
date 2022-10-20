@@ -14,14 +14,18 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rolandleou.model.APIReturnObject;
 import com.rolandleou.model.StockUser;
 import com.rolandleou.model.User;
+import com.rolandleou.service.JWTService;
 import com.rolandleou.service.StockUserService;
 
 @RestController
 @RequestMapping("user")
 public class UserController {
-
+	
 	@Autowired
 	private StockUserService stockUserService;
+
+	@Autowired
+	JWTService jWTService;
 	
 	@GetMapping("testBlock")
 	public String testBlock() {
@@ -32,6 +36,18 @@ public class UserController {
 	public String testUnblock() {
 		return "testUnblock";
 	}
+
+	@PostMapping("login")
+	public APIReturnObject login(@RequestBody User user) {
+		APIReturnObject result = new APIReturnObject();
+		Map<String, Object> data = new HashMap<String, Object>();
+		String token = jWTService.generateToken(user);
+		result.setMessage("登入成功，取得token");
+		data.put("token", token);
+		result.setData(data);
+		return result;
+	}
+	
 	@GetMapping("search/{account}")
 	public APIReturnObject search(@PathVariable(name="account") String account) {
 		APIReturnObject result = new APIReturnObject();
